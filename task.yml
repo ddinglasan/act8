@@ -1,0 +1,40 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: dnf & epel-release dl
+    dnf:
+      name:
+        - epel-release
+        - dnf
+    when: ansible_distribution == "CentOS"
+
+  - name: centos  upd and upg               
+    dnf:	
+      update_cache: yes
+      name: "*"
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+  - name: ubuntu servers fixing by dpks
+    shell: 
+      dpkg --configure -a
+    when: ansible_distribution == "Ubuntu"
+
+  - name: ubuntu upd and upg
+    apt: 
+      update_cache: yes
+      upgrade: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: Ubuntu
+  become: true
+  roles:
+    - Ubuntu
+
+- hosts: CentOS
+  become: true
+  roles:    
+    - CentOS
+ 
